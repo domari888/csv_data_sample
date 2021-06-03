@@ -3,16 +3,21 @@ require "csv"
 class ImportCsv
   # CSV のパスを引数として受け取り、インポート処理を実行
   def self.import(path)
+    # インポートするデータを格納するための空配列
+    list = []
+    # CSV ファイルからインポートしたデータを格納
     CSV.foreach(path, headers: true) do |row|
-      User.create!(
-        # row["name"]でCSVデータのname列の情報を指定して読み取ることができる
-        name: row["name"],
-        # row["age"]でCSVデータのageの列の情報を指定して読み取ることができる
-        age: row["age"],
-        # row["address"]でCSVデータのaddressの列の情報を指定して読み取ることができる
-        address: row["address"]
-      )
+      list << row.to_h
     end
+    list
+  end
+
+  def self.user_data
+    list = import('db/csv_data/user_data.csv')
+    puts "インポート処理を開始"
+    User.create!(list)
+    puts "インポート完了"
+    p list
   end
 
 end
